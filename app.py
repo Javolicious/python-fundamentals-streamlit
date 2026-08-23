@@ -1,6 +1,7 @@
 
 import streamlit as st
 import pandas as pd
+import numpy as np
 
 st.title("Proyecto Python Fundamentals")
 st.image(
@@ -31,10 +32,36 @@ if menu == "🏠 Home":
     st.title("Proyecto Aplicado en Streamlit")
     st.write("Javier Artieda Burgos")
 
+#------------------------------------------------------------------------------------------------------------------------------
+
 elif menu == "📊 Ejercicio 1":
     st.header("Flujo de Caja")
 
-# Crear la lista una sola vez
+def (ejercicio1)
+
+
+#------------------------------------------------------------------------------------------------------------------------------
+
+
+
+elif menu == "📦 Ejercicio 2":
+    st.header("Registro con NumPy")
+
+
+
+
+
+elif menu == "⚙️ Ejercicio 3":
+    st.header("Funciones Externas")
+
+elif menu == "🗂️ Ejercicio 4":
+    st.header("CRUD con Clases")
+
+#EJERCICIO 1
+
+def (ejercicio1):
+
+    # Crear la lista una sola vez
 if "movimientos" not in st.session_state:
     st.session_state.movimientos = []
 
@@ -101,23 +128,5 @@ if len(st.session_state.movimientos) > 0:
 
     else:
         st.warning("⚠️ Saldo igual a cero")
-
-
-
-
-
-
-elif menu == "📦 Ejercicio 2":
-    st.header("Registro con NumPy")
-
-elif menu == "⚙️ Ejercicio 3":
-    st.header("Funciones Externas")
-
-elif menu == "🗂️ Ejercicio 4":
-    st.header("CRUD con Clases")
-
-#EJERCICIO 1
-
-
 
 
