@@ -104,14 +104,6 @@ def ejercicio_1():
 #EJERCICIO 2
 def ejercicio_2():
 
-    st.title("Ejercicio 2 - Registro con NumPy y DataFrame")
-
-    st.markdown("""
-    Registre productos utilizando widgets de Streamlit.
-    Los registros son almacenados en arrays de NumPy y mostrados
-    posteriormente en un DataFrame.
-    """)
-
     # Crear lista en memoria
     if "productos" not in st.session_state:
         st.session_state.productos = []
@@ -189,7 +181,71 @@ def ejercicio_2():
 
 #EJERCICIO 3
 
+def ejercicio_3():
 
+    st.title("Ejercicio 3 - Funciones Externas")
+
+    st.markdown("""
+    Calculo de capacidades de baterías
+    """)
+
+    if "historico_soh" not in st.session_state:
+        st.session_state.historico_soh = []
+
+    funcion = st.selectbox(
+        "Seleccione la función",
+        ["Calcular SOH"]
+    )
+
+    capacidad_nominal = st.number_input(
+        "Capacidad nominal (kWh)",
+        min_value=1.0,
+        value=100.0
+    )
+
+    capacidad_actual = st.number_input(
+        "Capacidad actual (kWh)",
+        min_value=0.0,
+        value=90.0
+    )
+
+    if st.button("Ejecutar función"):
+
+        resultado = calcular_soh(
+            capacidad_nominal,
+            capacidad_actual
+        )
+
+        st.success(
+            f"SOH de la batería: {resultado}%"
+        )
+
+        nuevo_registro = {
+            "Función": funcion,
+            "Capacidad Nominal": capacidad_nominal,
+            "Capacidad Actual": capacidad_actual,
+            "Resultado (%)": resultado
+        }
+
+        st.session_state.historico_soh.append(
+            nuevo_registro
+        )
+
+    if len(st.session_state.historico_soh) > 0:
+
+        df_hist = pd.DataFrame(
+            st.session_state.historico_soh
+        )
+
+        st.subheader("Histórico de Resultados")
+
+        st.dataframe(
+            df_hist,
+            use_container_width=True
+        )
+
+
+#-------------------------------------------------------------------------------------------------------------------
 
 menu = st.sidebar.selectbox(
     "Menú",
@@ -218,7 +274,8 @@ elif menu == "📦 Ejercicio 2":
 
 
 elif menu == "⚙️ Ejercicio 3":
-    st.header("Funciones Externas")
+    st.header("Funciones Externas - Calculo de Capacidades de baterías")
+    ejercicio_3()
 
 elif menu == "🗂️ Ejercicio 4":
     st.header("CRUD con Clases")
