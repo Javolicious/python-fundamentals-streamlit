@@ -300,6 +300,105 @@ def ejercicio_3():
 
 #-------------------------------------------------------------------------------------------------------------------
 
+#EJERCICIO 4
+
+def ejercicio_4():
+
+    st.markdown("""
+    Gestión de productos mediante operaciones CRUD:
+
+    - Crear registros
+    - Leer registros
+    - Actualizar registros
+    - Eliminar registros
+    """)
+
+    # Crear la lista del inventario una sola vez
+    if "inventario" not in st.session_state:
+        st.session_state.inventario = []
+
+    # Crear contador para generar identificadores únicos
+    if "siguiente_id" not in st.session_state:
+        st.session_state.siguiente_id = 1
+
+    # Crear las pestañas del CRUD
+    tab_crear, tab_leer, tab_actualizar, tab_eliminar = st.tabs(
+        [
+            "Crear",
+            "Leer",
+            "Actualizar",
+            "Eliminar"
+        ]
+    )
+
+
+    # CREAR REGISTROS
+
+    with tab_crear:
+
+        st.subheader("Crear producto")
+
+        nombre = st.text_input(
+            "Nombre del producto",
+            key="crear_nombre_producto"
+        )
+
+        categoria = st.selectbox(
+            "Categoría",
+            [
+                "Electrónica",
+                "Accesorios",
+                "Hogar",
+                "Tecnología",
+                "Otros"
+            ],
+            key="crear_categoria_producto"
+        )
+
+        precio = st.number_input(
+            "Precio",
+            min_value=0.0,
+            step=1.0,
+            key="crear_precio_producto"
+        )
+
+        stock = st.number_input(
+            "Stock",
+            min_value=0,
+            step=1,
+            key="crear_stock_producto"
+        )
+
+        if st.button(
+            "Crear registro",
+            key="boton_crear_producto"
+        ):
+
+            if nombre.strip() == "":
+                st.error(
+                    "Debe ingresar el nombre del producto."
+                )
+
+            elif precio <= 0:
+                st.error(
+                    "El precio debe ser mayor que cero."
+                )
+
+            else:
+
+                nuevo_producto = {
+                    "ID": st.session_state.siguiente_id,
+                    "Nombre": nombre.strip(),
+                    "Categoría": categoria,
+                    "Precio": float(precio),
+                    "Stock": int(stock),
+                    "Valor total": float(precio * stock)
+                }
+
+                st.session_state.inventario.append(
+                    nuevo_producto
+                
+
 menu = st.sidebar.selectbox(
     "Menú",
     (
@@ -332,6 +431,6 @@ elif menu == "⚙️ Ejercicio 3":
 
 elif menu == "🗂️ Ejercicio 4":
     st.header("CRUD con Clases")
-
+    ejercicio_4()
 
 
