@@ -208,15 +208,15 @@ def ejercicio_3():
     tiempo_total = st.number_input(
         "Tiempo total del periodo en horas",
         min_value=0.01,
-        value=0.0,
+        value=0.1,
         step=1.0,
         key="tiempo_total_ejercicio_3"
     )
 
     tiempo_caida = st.number_input(
         "Tiempo de caída en horas",
-        min_value=0.0,
-        value=0.0,
+        min_value=0.1,
+        value=0.1,
         step=0.5,
         key="tiempo_caida_ejercicio_3"
     )
@@ -301,8 +301,8 @@ def ejercicio_3():
 
 #-------------------------------------------------------------------------------------------------------------------
 
-#EJERCICIO 4
-
+#Ejercicio 4
+    
 def ejercicio_4():
 
     st.markdown("""
@@ -314,15 +314,24 @@ def ejercicio_4():
     - Eliminar registros
     """)
 
-    # Crear la lista del inventario una sola vez
+    # Crear la lista de inventario una sola vez
     if "inventario" not in st.session_state:
         st.session_state.inventario = []
 
-    # Crear contador para generar identificadores únicos
+    # Contador para generar identificadores únicos
     if "siguiente_id" not in st.session_state:
         st.session_state.siguiente_id = 1
 
-    # Crear las pestañas del CRUD
+    # Categorías disponibles
+    categorias = [
+        "Electrónica",
+        "Accesorios",
+        "Hogar",
+        "Tecnología",
+        "Otros"
+    ]
+
+    # Crear pestañas para cada operación CRUD
     tab_crear, tab_leer, tab_actualizar, tab_eliminar = st.tabs(
         [
             "Crear",
@@ -332,8 +341,7 @@ def ejercicio_4():
         ]
     )
 
-
-    # CREAR REGISTROS
+    # CREAR
 
     with tab_crear:
 
@@ -346,13 +354,7 @@ def ejercicio_4():
 
         categoria = st.selectbox(
             "Categoría",
-            [
-                "Electrónica",
-                "Accesorios",
-                "Hogar",
-                "Tecnología",
-                "Otros"
-            ],
+            categorias,
             key="crear_categoria_producto"
         )
 
@@ -375,11 +377,13 @@ def ejercicio_4():
             key="boton_crear_producto"
         ):
 
+            # Validar el nombre
             if nombre.strip() == "":
                 st.error(
                     "Debe ingresar el nombre del producto."
                 )
 
+            # Validar el precio
             elif precio <= 0:
                 st.error(
                     "El precio debe ser mayor que cero."
@@ -387,16 +391,152 @@ def ejercicio_4():
 
             else:
 
-                nuevo_producto = {
-                    "ID": st.session_state.siguiente_id,
-                    "Nombre": nombre.strip(),
-                    "Categoría": categoria,
-                    "Precio": float(precio),
-                    "Stock": int(stock),
-                    "Valor total": float(precio * stock)
-                }
+                # Verificar si ya existe un producto
+                # con el mismo nombre
+                producto_repetido = any(
+                    producto["Nombre"].lower()
+                    == nombre.strip().lower()
+                    for producto
+                    in st.session_state.inventario
+                )
 
-                st.session_state.inventario.append(nuevo_producto)
+                if producto_repetido:
+                    st.error(
+                        "Ya existe un producto con ese nombre."
+                    )
+
+                else:
+
+                    nuevo_producto = {
+                        "ID": st.session_state.siguiente_id,
+                        "Nombre": nombre.strip(),
+                        "Categoría": categoria,
+                        "Precio": float(precio),
+                        "Stock": int(stock),
+                        "Valor total": float(
+                            precio * stock
+                        )
+                    }
+
+                    st.session_state.inventario.append(
+                        nuevo_producto
+                    )
+
+                    st.session_state.siguiente_id += 1
+
+                    st.success(
+                        "Producto creado correctamente."
+                    )
+
+
+    # LEER
+
+    with tab_leer:
+
+        st.subheader("Productos registrados")
+
+        if len(st.session_state.inventario) > 0:
+
+            # Convertir los registros en DataFrame
+            df_inventario = pd.DataFrame(
+                st.session_state.inventario
+            )
+
+            # Mostrar tabla
+            st.dataframe(
+                df_inventario,
+                use_container_width=True,
+                hide_index=True
+            )
+
+            # Calcular indicadores
+            cantidad_productos = len(
+                st.session_state.inventario
+            )
+
+            stock_total = df_inventario[
+                "Stock"
+            ].sum()
+
+            valor_inventario = df_inventario[
+                "Valor total"
+            ].sum()
+
+            # Mostrar indicadores en columnas
+            col1, col2, col3 = st.columns(3)
+
+            with col1:
+                st.metric(
+                    "Productos registrados",
+                    cantidad_productos
+                )
+
+            with col2:
+                st.metric(
+                    "Unidades en stock",
+                    int(stock_total)
+                )
+
+            with col3:
+                st.metric(
+                    "Valor del inventario",
+                    f"S/ {valor_inventario:,.2f}"
+                )
+
+        else:
+
+            st.info(
+                "No existen productos registrados."
+            )
+
+
+    # ACTUALIZAR
+
+    with tab_actualizar:
+
+        st.subheader("Actualizar producto")
+
+        if len(st.session_state.inventario) > 0:
+
+            # Crear opciones con ID y nombre
+            opciones_actualizar = {
+                (
+                    f"{producto['ID']} - "
+                    f"{producto['Nombre']}"
+                ): producto["ID"]
+                for producto
+                in st.session_state.inventario
+            }
+
+            producto_seleccionado = st.selectbox(
+                "Seleccione el producto",
+                list(opciones_actualizar.keys()),
+                key="seleccionar_producto_actualizar"
+            )
+
+            # Obtener el ID del producto seleccionado
+            id_seleccionado = opciones_actualizar[
+                producto_seleccionado
+            ]
+
+            # Buscar el producto completo por ID
+            producto_actual = next(
+                producto
+                for producto
+                in st.session_state.inventario
+                if producto["ID"] == id_seleccionado
+            )
+
+            # Determinar la posición actual
+            # de la categoría
+            indice_categoria = categorias.index(
+                producto_actual["Categoría"]
+            )
+
+            nuevo_nombre = st.text_input(
+                "Nuevo nombre",
+                value=producto_actual["Nombre"],
+       
                 
 
 menu = st.sidebar.selectbox(
