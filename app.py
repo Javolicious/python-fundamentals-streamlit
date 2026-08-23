@@ -56,7 +56,7 @@ elif menu == "🗂️ Ejercicio 4":
 def ejercicio_1():
 
 # Crear la lista
-if "movimientos" not in st.session_state:
+    if "movimientos" not in st.session_state:
     st.session_state.movimientos = []
 
 # Valores de entrada
