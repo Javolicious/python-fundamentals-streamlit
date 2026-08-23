@@ -35,15 +35,12 @@ if menu == "🏠 Home":
 
 elif menu == "📊 Ejercicio 1":
     st.header("Flujo de Caja")
-
-ejercicio_1()
+    ejercicio_1()
 
 
 elif menu == "📦 Ejercicio 2":
     st.header("Registro con NumPy")
-
-
-ejercicio_2()
+    ejercicio_2()
 
 
 elif menu == "⚙️ Ejercicio 3":
@@ -52,15 +49,17 @@ elif menu == "⚙️ Ejercicio 3":
 elif menu == "🗂️ Ejercicio 4":
     st.header("CRUD con Clases")
 
+#----------------------------------------------------------------------------------------------------------------------------------------------------
+
 #EJERCICIO 1
 
-def (ejercicio_2):
+def (ejercicio_1):
 
-    # Crear la lista una sola vez
+# Crear la lista
 if "movimientos" not in st.session_state:
     st.session_state.movimientos = []
 
-# Entradas
+# Valores de entrada
 concepto = st.text_input("Concepto")
 
 tipo = st.selectbox(
@@ -124,11 +123,9 @@ if len(st.session_state.movimientos) > 0:
     else:
         st.warning("⚠️ Saldo igual a cero")
 
+pass
+#-------------------------------------------------------------------------------------------------------------------
 #EJERCICIO 2
-import streamlit as st
-import pandas as pd
-import numpy as np
-
 def ejercicio_2():
 
     st.title("Ejercicio 2 - Registro con NumPy y DataFrame")
@@ -211,4 +208,4 @@ def ejercicio_2():
             f"S/ {df['Total'].astype(float).sum():,.2f}"
         )
 
-
+pass
