@@ -37,7 +37,7 @@ if menu == "🏠 Home":
 elif menu == "📊 Ejercicio 1":
     st.header("Flujo de Caja")
 
-def (ejercicio1)
+Ejercicio1()
 
 
 #------------------------------------------------------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ elif menu == "🗂️ Ejercicio 4":
 
 #EJERCICIO 1
 
-def (ejercicio1):
+def (Ejercicio1):
 
     # Crear la lista una sola vez
 if "movimientos" not in st.session_state:
