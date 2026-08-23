@@ -1,11 +1,11 @@
 
 import streamlit as st
 
-st.title("Especialización Python for Analytics")
-st.sidebar.title("Ejercicios")
-st.write("Elaborado por Javier Artieda")
-st.write("Elaborado por Javier Artieda")
+st.title("Proyecto Python Fundamentals")
 st.image(
-"descargas/dmc.JPG",
-width=250
+"dmc.jpg",
+caption="Logo del proyecto",
+width=300
 )
+st.subheader("Javier Artieda Burgos")
+st.write("Especialización Python for Analytics")
