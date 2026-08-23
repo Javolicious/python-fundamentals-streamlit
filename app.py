@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 
 from libreria_funciones_proyecto1 import calcular_disponibilidad_sistema
+from libreria_clases_proyecto1 import calcular_disponibilidad_sistema
 
 st.title("Proyecto Python Fundamentals")
 st.image(
