@@ -188,62 +188,115 @@ def ejercicio_3():
     st.title("Ejercicio 3 - Funciones Externas")
 
     st.markdown("""
-    Calculo de capacidades de baterías
+    En este ejercicio se utiliza una función externa para calcular
+    la disponibilidad de un sistema informático.
+
+    La disponibilidad representa el porcentaje de tiempo durante
+    el cual el sistema se mantuvo operativo.
     """)
 
-    if "historico_soh" not in st.session_state:
-        st.session_state.historico_soh = []
+    # Crear el histórico en la sesión
+    if "historico_disponibilidad" not in st.session_state:
+        st.session_state.historico_disponibilidad = []
 
-    funcion = st.selectbox(
-        "Seleccione la función",
-        ["Calcular SOH"]
+    # Selector de función
+    funcion_seleccionada = st.selectbox(
+        "Seleccione una función",
+        ["Calcular disponibilidad del sistema"]
     )
 
-    capacidad_nominal = st.number_input(
-        "Capacidad nominal (kWh)",
-        min_value=1.0,
-        value=100.0
+    # Parámetros de entrada
+    tiempo_total = st.number_input(
+        "Tiempo total del periodo en horas",
+        min_value=0.01,
+        value=720.0,
+        step=1.0,
+        key="tiempo_total_ejercicio_3"
     )
 
-    capacidad_actual = st.number_input(
-        "Capacidad actual (kWh)",
+    tiempo_caida = st.number_input(
+        "Tiempo de caída en horas",
         min_value=0.0,
-        value=90.0
+        value=5.0,
+        step=0.5,
+        key="tiempo_caida_ejercicio_3"
     )
 
-    if st.button("Ejecutar función"):
+    # Ejecutar la función externa
+    if st.button(
+        "Ejecutar función",
+        key="boton_ejercicio_3"
+    ):
 
-        resultado = calcular_soh(
-            capacidad_nominal,
-            capacidad_actual
+        if tiempo_caida > tiempo_total:
+            st.error(
+                "El tiempo de caída no puede ser mayor "
+                "que el tiempo total."
+            )
+
+        else:
+            try:
+                resultado = calcular_disponibilidad_sistema(
+                    tiempo_total,
+                    tiempo_caida
+                )
+
+                st.success("Función ejecutada correctamente")
+
+                # Mostrar el resultado completo
+                st.subheader("Resultado")
+                st.json(resultado)
+
+                # Preparar registro para el histórico
+                registro = {
+                    "Función": funcion_seleccionada,
+                    "Tiempo total (horas)": tiempo_total,
+                    "Tiempo de caída (horas)": tiempo_caida
+                }
+
+                # La función externa devuelve un diccionario
+                if isinstance(resultado, dict):
+                    registro.update(resultado)
+                else:
+                    registro["Resultado"] = resultado
+
+                # Agregar al histórico
+                st.session_state.historico_disponibilidad.append(
+                    registro
+                )
+
+            except ValueError as error:
+                st.error(f"Error de validación: {error}")
+
+            except Exception as error:
+                st.error(f"No se pudo ejecutar la función: {error}")
+
+    # Mostrar histórico
+    if len(st.session_state.historico_disponibilidad) > 0:
+
+        st.subheader("Histórico de resultados")
+
+        df_historico = pd.DataFrame(
+            st.session_state.historico_disponibilidad
         )
-
-        st.success(
-            f"SOH de la batería: {resultado}%"
-        )
-
-        nuevo_registro = {
-            "Función": funcion,
-            "Capacidad Nominal": capacidad_nominal,
-            "Capacidad Actual": capacidad_actual,
-            "Resultado (%)": resultado
-        }
-
-        st.session_state.historico_soh.append(
-            nuevo_registro
-        )
-
-    if len(st.session_state.historico_soh) > 0:
-
-        df_hist = pd.DataFrame(
-            st.session_state.historico_soh
-        )
-
-        st.subheader("Histórico de Resultados")
 
         st.dataframe(
-            df_hist,
-            use_container_width=True
+            df_historico,
+            use_container_width=True,
+            hide_index=True
+        )
+
+        # Botón para eliminar el histórico
+        if st.button(
+            "Limpiar histórico",
+            key="limpiar_historico_ejercicio_3"
+        ):
+            st.session_state.historico_disponibilidad = []
+            st.rerun()
+
+    else:
+        st.info(
+            "Todavía no existen resultados en el histórico."
         )
 
 
