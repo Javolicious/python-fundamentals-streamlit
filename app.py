@@ -395,8 +395,7 @@ def ejercicio_4():
                     "Valor total": float(precio * stock)
                 }
 
-                st.session_state.inventario.append(
-                    nuevo_producto
+                st.session_state.inventario.append(nuevo_producto)
                 
 
 menu = st.sidebar.selectbox(
