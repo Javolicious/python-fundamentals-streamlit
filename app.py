@@ -53,7 +53,7 @@ elif menu == "🗂️ Ejercicio 4":
 
 #EJERCICIO 1
 
-def (ejercicio_1):
+def ejercicio_1():
 
 # Crear la lista
 if "movimientos" not in st.session_state:
