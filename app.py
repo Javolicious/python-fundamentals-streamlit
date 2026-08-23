@@ -185,8 +185,6 @@ def ejercicio_2():
 
 def ejercicio_3():
 
-    st.title("Ejercicio 3 - Funciones Externas")
-
     st.markdown("""
     En este ejercicio se utiliza una función externa para calcular
     la disponibilidad de un sistema informático.
@@ -209,7 +207,7 @@ def ejercicio_3():
     tiempo_total = st.number_input(
         "Tiempo total del periodo en horas",
         min_value=0.01,
-        value=720.0,
+        value=0.0,
         step=1.0,
         key="tiempo_total_ejercicio_3"
     )
@@ -217,7 +215,7 @@ def ejercicio_3():
     tiempo_caida = st.number_input(
         "Tiempo de caída en horas",
         min_value=0.0,
-        value=5.0,
+        value=0.0,
         step=0.5,
         key="tiempo_caida_ejercicio_3"
     )
