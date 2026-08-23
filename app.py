@@ -55,75 +55,83 @@ elif menu == "🗂️ Ejercicio 4":
 
 def ejercicio_1():
 
-# Crear la lista
+    # Crear la lista
     if "movimientos" not in st.session_state:
-    st.session_state.movimientos = []
+        st.session_state.movimientos = []
 
-# Valores de entrada
-concepto = st.text_input("Concepto")
+    # Valores de entrada
+    concepto = st.text_input("Concepto")
 
-tipo = st.selectbox(
-    "Tipo de movimiento",
-    ["Ingreso", "Gasto"]
-)
+    tipo = st.selectbox(
+        "Tipo de movimiento",
+        ["Ingreso", "Gasto"]
+    )
 
-valor = st.number_input(
-    "Valor",
-    min_value=0.0,
-    step=10.0
-)
+    valor = st.number_input(
+        "Valor",
+        min_value=0.0,
+        step=10.0
+    )
 
-# Botón agregar
-if st.button("Agregar movimiento"):
+    # Botón agregar
+    if st.button("Agregar movimiento"):
 
-    if concepto != "" and valor > 0:
+        if concepto != "" and valor > 0:
 
-        movimiento = {
-            "Concepto": concepto,
-            "Tipo": tipo,
-            "Valor": valor
-        }
+            movimiento = {
+                "Concepto": concepto,
+                "Tipo": tipo,
+                "Valor": valor
+            }
 
-        st.session_state.movimientos.append(movimiento)
+            st.session_state.movimientos.append(movimiento)
 
-        st.success("Movimiento agregado correctamente")
+            st.success("Movimiento agregado correctamente")
 
-    else:
-        st.error("Complete todos los campos")
+        else:
+            st.error("Complete todos los campos")
 
-# Mostrar movimientos
-if len(st.session_state.movimientos) > 0:
+    # Mostrar movimientos
+    if len(st.session_state.movimientos) > 0:
 
-    df = pd.DataFrame(st.session_state.movimientos)
+        df = pd.DataFrame(st.session_state.movimientos)
 
-    st.subheader("Movimientos registrados")
-    st.dataframe(df)
+        st.subheader("Movimientos registrados")
+        st.dataframe(df)
 
-    total_ingresos = df[df["Tipo"] == "Ingreso"]["Valor"].sum()
-    total_gastos = df[df["Tipo"] == "Gasto"]["Valor"].sum()
-    saldo = total_ingresos - total_gastos
+        total_ingresos = df[df["Tipo"] == "Ingreso"]["Valor"].sum()
+        total_gastos = df[df["Tipo"] == "Gasto"]["Valor"].sum()
 
-    col1, col2, col3 = st.columns(3)
+        saldo = total_ingresos - total_gastos
 
-    with col1:
-        st.metric("Total Ingresos", f"S/ {total_ingresos:,.2f}")
+        col1, col2, col3 = st.columns(3)
 
-    with col2:
-        st.metric("Total Gastos", f"S/ {total_gastos:,.2f}")
+        with col1:
+            st.metric(
+                "Total Ingresos",
+                f"S/ {total_ingresos:,.2f}"
+            )
 
-    with col3:
-        st.metric("Saldo Final", f"S/ {saldo:,.2f}")
+        with col2:
+            st.metric(
+                "Total Gastos",
+                f"S/ {total_gastos:,.2f}"
+            )
 
-    if saldo > 0:
-        st.success("✅ Flujo de caja a favor")
+        with col3:
+            st.metric(
+                "Saldo Final",
+                f"S/ {saldo:,.2f}"
+            )
 
-    elif saldo < 0:
-        st.error("❌ Flujo de caja en contra")
+        if saldo > 0:
+            st.success("✅ Flujo de caja a favor")
 
-    else:
-        st.warning("⚠️ Saldo igual a cero")
+        elif saldo < 0:
+            st.error("❌ Flujo de caja en contra")
 
-pass
+        else:
+            st.warning("⚠️ Saldo igual a cero")
 #-------------------------------------------------------------------------------------------------------------------
 #EJERCICIO 2
 def ejercicio_2():
@@ -208,4 +216,3 @@ def ejercicio_2():
             f"S/ {df['Total'].astype(float).sum():,.2f}"
         )
 
-pass
