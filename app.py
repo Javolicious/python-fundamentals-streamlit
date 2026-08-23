@@ -536,7 +536,7 @@ def ejercicio_4():
             nuevo_nombre = st.text_input(
                 "Nuevo nombre",
                 value=producto_actual["Nombre"],
-       
+            )
                 
 
 menu = st.sidebar.selectbox(
