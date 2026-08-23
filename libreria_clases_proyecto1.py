@@ -1,5 +1,24 @@
 import math
 
+def validar_positivo(
+    valor,
+    nombre,
+    permitir_cero=False
+):
+
+    if permitir_cero:
+
+        if valor < 0:
+            raise ValueError(
+                f"{nombre} no puede ser negativo."
+            )
+
+    else:
+
+        if valor <= 0:
+            raise ValueError(
+                f"{nombre} debe ser mayor que cero."
+            )
 
 
 class InventarioProducto:
