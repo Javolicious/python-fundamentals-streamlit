@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 
 from libreria_funciones_proyecto1 import calcular_disponibilidad_sistema
+from libreria_clases_proyecto1 import InventarioProducto
 
 st.title("Proyecto Python Fundamentals")
 st.image(
@@ -305,236 +306,258 @@ def ejercicio_3():
 def ejercicio_4():
 
     st.markdown("""
-    Gestión de productos mediante operaciones CRUD:
-
-    - Crear registros
-    - Leer registros
-    - Actualizar registros
-    - Eliminar registros
+    Gestión de inventario utilizando la clase
+    InventarioProducto y operaciones CRUD.
     """)
 
-    # Crear la lista de inventario una sola vez
     if "inventario" not in st.session_state:
         st.session_state.inventario = []
 
-    # Contador para generar identificadores únicos
-    if "siguiente_id" not in st.session_state:
-        st.session_state.siguiente_id = 1
-
-    # Categorías disponibles
-    categorias = [
-        "Electrónica",
-        "Accesorios",
-        "Hogar",
-        "Tecnología",
-        "Otros"
-    ]
-
-    # Crear pestañas para cada operación CRUD
-    tab_crear, tab_leer, tab_actualizar, tab_eliminar = st.tabs(
-        [
-            "Crear",
-            "Leer",
-            "Actualizar",
-            "Eliminar"
-        ]
+    tab1, tab2, tab3, tab4 = st.tabs(
+        ["Crear", "Leer", "Actualizar", "Eliminar"]
     )
+
 
     # CREAR
 
-    with tab_crear:
 
-        st.subheader("Crear producto")
+    with tab1:
+
+        st.subheader("Crear Producto")
 
         nombre = st.text_input(
-            "Nombre del producto",
-            key="crear_nombre_producto"
+            "Nombre",
+            key="crear_nombre"
         )
 
-        categoria = st.selectbox(
-            "Categoría",
-            categorias,
-            key="crear_categoria_producto"
+        costo = st.number_input(
+            "Costo Unitario",
+            min_value=0.01,
+            value=1.0,
+            key="crear_costo"
         )
 
         precio = st.number_input(
-            "Precio",
-            min_value=0.0,
-            step=1.0,
-            key="crear_precio_producto"
+            "Precio Unitario",
+            min_value=0.01,
+            value=1.0,
+            key="crear_precio"
         )
 
         stock = st.number_input(
-            "Stock",
+            "Stock Actual",
             min_value=0,
-            step=1,
-            key="crear_stock_producto"
+            value=0,
+            key="crear_stock"
         )
 
-        if st.button(
-            "Crear registro",
-            key="boton_crear_producto"
-        ):
+        stock_minimo = st.number_input(
+            "Stock Mínimo",
+            min_value=0,
+            value=0,
+            key="crear_stock_minimo"
+        )
 
-            # Validar el nombre
-            if nombre.strip() == "":
+        if st.button("Crear Producto"):
+
+            try:
+
+                producto = InventarioProducto(
+                    nombre=nombre,
+                    costo_unitario=costo,
+                    precio_unitario=precio,
+                    stock_actual=stock,
+                    stock_minimo=stock_minimo
+                )
+
+                st.session_state.inventario.append(
+                    producto
+                )
+
+                st.success(
+                    "Producto creado correctamente"
+                )
+
+            except Exception as error:
+
                 st.error(
-                    "Debe ingresar el nombre del producto."
+                    f"Error: {error}"
                 )
-
-            # Validar el precio
-            elif precio <= 0:
-                st.error(
-                    "El precio debe ser mayor que cero."
-                )
-
-            else:
-
-                # Verificar si ya existe un producto
-                # con el mismo nombre
-                producto_repetido = any(
-                    producto["Nombre"].lower()
-                    == nombre.strip().lower()
-                    for producto
-                    in st.session_state.inventario
-                )
-
-                if producto_repetido:
-                    st.error(
-                        "Ya existe un producto con ese nombre."
-                    )
-
-                else:
-
-                    nuevo_producto = {
-                        "ID": st.session_state.siguiente_id,
-                        "Nombre": nombre.strip(),
-                        "Categoría": categoria,
-                        "Precio": float(precio),
-                        "Stock": int(stock),
-                        "Valor total": float(
-                            precio * stock
-                        )
-                    }
-
-                    st.session_state.inventario.append(
-                        nuevo_producto
-                    )
-
-                    st.session_state.siguiente_id += 1
-
-                    st.success(
-                        "Producto creado correctamente."
-                    )
 
 
     # LEER
 
-    with tab_leer:
 
-        st.subheader("Productos registrados")
+    with tab2:
+
+        st.subheader(
+            "Productos Registrados"
+        )
 
         if len(st.session_state.inventario) > 0:
 
-            # Convertir los registros en DataFrame
-            df_inventario = pd.DataFrame(
-                st.session_state.inventario
-            )
+            datos = []
 
-            # Mostrar tabla
+            for producto in st.session_state.inventario:
+
+                datos.append(
+                    producto.resumen()
+                )
+
+            df = pd.DataFrame(datos)
+
             st.dataframe(
-                df_inventario,
-                use_container_width=True,
-                hide_index=True
+                df,
+                use_container_width=True
             )
 
-            # Calcular indicadores
-            cantidad_productos = len(
-                st.session_state.inventario
+            st.metric(
+                "Total Productos",
+                len(df)
             )
-
-            stock_total = df_inventario[
-                "Stock"
-            ].sum()
-
-            valor_inventario = df_inventario[
-                "Valor total"
-            ].sum()
-
-            # Mostrar indicadores en columnas
-            col1, col2, col3 = st.columns(3)
-
-            with col1:
-                st.metric(
-                    "Productos registrados",
-                    cantidad_productos
-                )
-
-            with col2:
-                st.metric(
-                    "Unidades en stock",
-                    int(stock_total)
-                )
-
-            with col3:
-                st.metric(
-                    "Valor del inventario",
-                    f"S/ {valor_inventario:,.2f}"
-                )
 
         else:
 
             st.info(
-                "No existen productos registrados."
+                "No existen productos registrados"
             )
-
 
     # ACTUALIZAR
 
-    with tab_actualizar:
 
-        st.subheader("Actualizar producto")
+    with tab3:
+
+        st.subheader(
+            "Actualizar Producto"
+        )
 
         if len(st.session_state.inventario) > 0:
 
-            # Crear opciones con ID y nombre
-            opciones_actualizar = {
-                (
-                    f"{producto['ID']} - "
-                    f"{producto['Nombre']}"
-                ): producto["ID"]
-                for producto
+            nombres = [
+                p.nombre
+                for p
                 in st.session_state.inventario
-            }
-
-            producto_seleccionado = st.selectbox(
-                "Seleccione el producto",
-                list(opciones_actualizar.keys()),
-                key="seleccionar_producto_actualizar"
-            )
-
-            # Obtener el ID del producto seleccionado
-            id_seleccionado = opciones_actualizar[
-                producto_seleccionado
             ]
 
-            # Buscar el producto completo por ID
-            producto_actual = next(
-                producto
-                for producto
-                in st.session_state.inventario
-                if producto["ID"] == id_seleccionado
+            nombre_seleccionado = st.selectbox(
+                "Seleccione un producto",
+                nombres,
+                key="actualizar_producto"
             )
 
-            # Determinar la posición actual
-            # de la categoría
-            indice_categoria = categorias.index(
-                producto_actual["Categoría"]
+            producto = next(
+                p
+                for p
+                in st.session_state.inventario
+                if p.nombre
+                == nombre_seleccionado
             )
 
             nuevo_nombre = st.text_input(
-                "Nuevo nombre",
-                value=producto_actual["Nombre"],
+                "Nuevo Nombre",
+                value=producto.nombre
+            )
+
+            nuevo_costo = st.number_input(
+                "Nuevo Costo",
+                min_value=0.01,
+                value=float(
+                    producto.costo_unitario
+                )
+            )
+
+            nuevo_precio = st.number_input(
+                "Nuevo Precio",
+                min_value=0.01,
+                value=float(
+                    producto.precio_unitario
+                )
+            )
+
+            nuevo_stock = st.number_input(
+                "Nuevo Stock",
+                min_value=0,
+                value=int(
+                    producto.stock_actual
+                )
+            )
+
+            nuevo_stock_minimo = st.number_input(
+                "Nuevo Stock Mínimo",
+                min_value=0,
+                value=int(
+                    producto.stock_minimo
+                )
+            )
+
+            if st.button(
+                "Actualizar Producto"
+            ):
+
+                producto.nombre = nuevo_nombre
+                producto.costo_unitario = nuevo_costo
+                producto.precio_unitario = nuevo_precio
+                producto.stock_actual = nuevo_stock
+                producto.stock_minimo = nuevo_stock_minimo
+
+                st.success(
+                    "Producto actualizado"
+                )
+
+                st.rerun()
+
+        else:
+
+            st.info(
+                "No existen productos para actualizar"
+            )
+
+
+    # ELIMINAR
+
+
+    with tab4:
+
+        st.subheader(
+            "Eliminar Producto"
+        )
+
+        if len(st.session_state.inventario) > 0:
+
+            nombres = [
+                p.nombre
+                for p
+                in st.session_state.inventario
+            ]
+
+            nombre_eliminar = st.selectbox(
+                "Seleccione un producto",
+                nombres,
+                key="eliminar_producto"
+            )
+
+            if st.button(
+                "Eliminar Producto"
+            ):
+
+                st.session_state.inventario = [
+                    p
+                    for p
+                    in st.session_state.inventario
+                    if p.nombre
+                    != nombre_eliminar
+                ]
+
+                st.success(
+                    "Producto eliminado"
+                )
+
+                st.rerun()
+
+        else:
+
+            st.info(
+                "No existen productos para eliminar"
             )
                 
 
