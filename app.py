@@ -37,7 +37,7 @@ if menu == "🏠 Home":
 elif menu == "📊 Ejercicio 1":
     st.header("Flujo de Caja")
 
-Ejercicio1()
+ejercicio_1()
 
 
 #------------------------------------------------------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ elif menu == "📦 Ejercicio 2":
     st.header("Registro con NumPy")
 
 
-
+ejercicio_2()
 
 
 elif menu == "⚙️ Ejercicio 3":
@@ -59,7 +59,7 @@ elif menu == "🗂️ Ejercicio 4":
 
 #EJERCICIO 1
 
-def (Ejercicio1):
+def (ejercicio_2):
 
     # Crear la lista una sola vez
 if "movimientos" not in st.session_state:
@@ -128,5 +128,92 @@ if len(st.session_state.movimientos) > 0:
 
     else:
         st.warning("⚠️ Saldo igual a cero")
+
+#EJERCICIO 2
+import streamlit as st
+import pandas as pd
+import numpy as np
+
+def ejercicio_2():
+
+    st.title("Ejercicio 2 - Registro con NumPy y DataFrame")
+
+    st.markdown("""
+    Registre productos utilizando widgets de Streamlit.
+    Los registros son almacenados en arrays de NumPy y mostrados
+    posteriormente en un DataFrame.
+    """)
+
+    # Crear lista en memoria
+    if "productos" not in st.session_state:
+        st.session_state.productos = []
+
+    # Formulario
+    nombre = st.text_input("Nombre del producto")
+
+    categoria = st.selectbox(
+        "Categoría",
+        ["Electrónica", "Accesorios", "Hogar", "Tecnología"]
+    )
+
+    precio = st.number_input(
+        "Precio",
+        min_value=0.0,
+        step=1.0
+    )
+
+    cantidad = st.number_input(
+        "Cantidad",
+        min_value=1,
+        step=1
+    )
+
+    # Botón agregar
+    if st.button("Agregar Producto"):
+
+        total = precio * cantidad
+
+        nuevo_producto = [
+            nombre,
+            categoria,
+            precio,
+            cantidad,
+            total
+        ]
+
+        st.session_state.productos.append(nuevo_producto)
+
+        st.success("Producto agregado correctamente")
+
+    # Mostrar tabla
+    if len(st.session_state.productos) > 0:
+
+        productos_array = np.array(
+            st.session_state.productos,
+            dtype=object
+        )
+
+        df = pd.DataFrame(
+            productos_array,
+            columns=[
+                "Producto",
+                "Categoría",
+                "Precio",
+                "Cantidad",
+                "Total"
+            ]
+        )
+
+        st.subheader("Productos Registrados")
+
+        st.dataframe(
+            df,
+            use_container_width=True
+        )
+
+        st.metric(
+            "Venta Total",
+            f"S/ {df['Total'].astype(float).sum():,.2f}"
+        )
 
 
