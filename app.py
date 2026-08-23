@@ -308,8 +308,8 @@ def ejercicio_4():
     # Reiniciar datos antiguos del CRUD
 
     if "version_inventario" not in st.session_state:
-    st.session_state.inventario = []
-    st.session_state.version_inventario = 2
+        st.session_state.inventario = []
+        st.session_state.version_inventario = 2
 
     st.markdown("""
     Gestión de inventario utilizando la clase
